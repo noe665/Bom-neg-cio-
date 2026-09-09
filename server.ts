@@ -238,6 +238,7 @@ Caso contrário: {"min": numero, "med": numero, "max": numero}`;
             const response = await ai.models.generateContent({
               model: 'gemini-2.5-flash',
               contents: prompt,
+              config: { responseMimeType: 'application/json' },
             });
             let text = response.text || '';
             text = text.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -301,6 +302,7 @@ Retorne APENAS um array JSON válido (sem blocos de código ou markdown) contend
             const response = await ai.models.generateContent({
               model: 'gemini-2.5-flash',
               contents: prompt,
+              config: { responseMimeType: 'application/json' },
             });
             let text = response.text || '';
             text = text.replace(/```json/g, '').replace(/```/g, '').trim();
