@@ -933,6 +933,18 @@ return (
                   <div className="absolute -right-8 md:-right-12 top-1/2 -translate-y-1/2 w-16 h-16 md:w-20 md:h-20 bg-slate-800 rounded-full flex items-center justify-center shadow-xl border border-slate-700">
                     <FileSpreadsheet className="w-8 h-8 md:w-10 md:h-10 text-rose-400" />
                   </div>
+                  
+                  <a
+                    href="https://bom-neg-cio-1.ai.studio"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute bottom-4 right-4 md:bottom-8 md:right-6 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-300 hover:to-amber-400 text-slate-900 font-extrabold px-6 py-3 md:px-8 md:py-3.5 rounded-full shadow-[0_0_30px_rgba(251,191,36,0.3)] hover:shadow-[0_0_40px_rgba(251,191,36,0.5)] hover:scale-105 transition-all z-20 flex items-center border-2 border-yellow-200"
+                  >
+                    Versão original
+                    <span className="absolute -top-3 -right-3 bg-red-600 text-white text-[10px] md:text-xs font-black tracking-wider px-2 py-0.5 rounded-full border-2 border-slate-900 shadow-sm">
+                      VIP
+                    </span>
+                  </a>
                 </div>
               </div>
             </motion.div>
