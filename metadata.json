@@ -1,0 +1,6 @@
+{
+  "name": "Bom Negócio",
+  "description": "Valide ideias de mercado com simulações financeiras de fluxo de caixa e indicadores (VPL, TIR, Payback, MV).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

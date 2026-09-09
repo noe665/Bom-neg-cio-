@@ -1,0 +1,100 @@
+  const downloadSocialProject = async () => {
+    setIsGeneratingReport(true);
+    try {
+      const response = await fetch('/api/generate-social-project', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectData })
+      });
+      
+      const data = await response.json();
+      if (data.error) throw new Error(data.error);
+      
+      const projectText = data.projectText || '';
+      const pagesContent = projectText.split('[PAGE_BREAK]').map((p: string) => p.trim());
+      
+      const doc = new jsPDF({ format: 'a4' });
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const marginT = 20; // 2cm
+      const marginR = 20; // 2cm
+      const marginB = 30; // 3cm
+      const marginL = 30; // 3cm
+      const textWidth = pageWidth - marginL - marginR;
+      
+      // Page 1: Cover
+      // Logo (top center, small, watermark opacity if possible - jsPDF has setGState)
+      doc.setGState(new doc.GState({opacity: 0.3}));
+      const logoWidth = 30;
+      const logoHeight = 30; // assuming squareish
+      doc.addImage(logoImg, 'PNG', (pageWidth - logoWidth) / 2, marginT, logoWidth, logoHeight);
+      doc.setGState(new doc.GState({opacity: 1.0}));
+      
+      // Title
+      doc.setFont("times", "bold");
+      doc.setFontSize(24);
+      doc.text(projectData.name || 'Projeto Social', pageWidth / 2, pageHeight / 2 - 20, { align: 'center' });
+      
+      // Investor Name
+      doc.setFontSize(16);
+      doc.setFont("times", "normal");
+      doc.text(projectData.investorName || 'Investidor Não Informado', pageWidth / 2, pageHeight / 2, { align: 'center' });
+      
+      // Date at bottom center
+      const dateStr = new Date().toLocaleDateString('pt-BR');
+      doc.setFontSize(12);
+      doc.text(dateStr, pageWidth / 2, pageHeight - marginB, { align: 'center' });
+      
+      // Pages 2, 3, 4, 5
+      for (let i = 0; i < 4; i++) {
+        doc.addPage();
+        const content = pagesContent[i] || '';
+        const paragraphs = content.split('\n').map((p: string) => p.trim()).filter((p: string) => p.length > 0);
+        let yPos = marginT;
+        const lineSpacing = 7.5;
+        
+        paragraphs.forEach((para: string) => {
+          let textToPrint = para;
+          let isHeading = false;
+          if (textToPrint === textToPrint.toUpperCase() && textToPrint.length > 15) {
+             isHeading = true;
+             doc.setFont("times", "bold");
+             doc.setFontSize(14);
+          } else {
+             doc.setFont("times", "normal");
+             doc.setFontSize(12);
+          }
+          
+          if (yPos > pageHeight - marginB) {
+            doc.addPage();
+            yPos = marginT;
+          }
+          
+          if (isHeading) {
+             doc.text(textToPrint, marginL, yPos);
+             const split = doc.splitTextToSize(textToPrint, textWidth);
+             yPos += split.length * lineSpacing;
+          } else {
+             const textLines = doc.splitTextToSize(textToPrint, textWidth);
+             textLines.forEach((line: string, index: number) => {
+                 if (yPos > pageHeight - marginB) {
+                    doc.addPage();
+                    yPos = marginT;
+                 }
+                 const isLastLine = index === textLines.length - 1;
+                 doc.text(line, marginL, yPos, { maxWidth: textWidth, align: isLastLine ? 'left' : 'justify' });
+                 yPos += lineSpacing;
+             });
+          }
+          yPos += 5; // space between paragraphs
+        });
+      }
+      
+      doc.save(`Projeto_Social_${projectData.name ? projectData.name.replace(/\s+/g, '_') : 'Projeto'}.pdf`);
+    } catch (error) {
+      console.error('Erro ao gerar projeto social:', error);
+      alert('Ocorreu um erro ao gerar o documento do projeto. Tente novamente.');
+    } finally {
+      setIsGeneratingReport(false);
+    }
+  };
